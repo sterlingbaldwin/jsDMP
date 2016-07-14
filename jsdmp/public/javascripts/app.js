@@ -11,6 +11,7 @@ app.controller('AppCtrl', function($scope, mySocket) {
 // Computes job, when done returns the result
   $scope.compute = function(job){
     var data = job.data;
-    return output = job.function(data);
+    var output = job.function(data);
+    mySocket.emit('job:completed', {result: output});
   };
 });

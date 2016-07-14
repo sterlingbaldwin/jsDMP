@@ -9,10 +9,7 @@ $(function() {
         connection.send('get-job')
     }
 
-    // Computes job, when done returns the result
-    function computeJob(job){
-            return result;
-    }
+  
 
     // tells the backend to dorp the job when computed
     function reportBackend(){
