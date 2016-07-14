@@ -11,6 +11,8 @@ module.exports = {
     }
     if(args.jobq_size){
       this.jobq_size = args.jobq_size;
+    } else {
+      this.jobq_size = 10;
     }
     if(!args.compute_function){
       console.log('no compute_function given to init');
@@ -21,12 +23,16 @@ module.exports = {
     this.aggregator = args.aggregator;
     this.compute_function = args.compute_function;
     this.generator = args.generator;
+    while(this.jobq.length < this.jobq_size){
+      this.generator();
+    }
 
   },
   dispatcher: function(){
     var job = jobq.pop();
-    inprogq.push(job);
-    socket.emit('job:request', job);
+    this.inprogq.push(job);
+    this.socket.emit('job:new_job', job);
+    this.generator();
   },
   aggregator: function(){
 
@@ -34,7 +40,7 @@ module.exports = {
   compute_function: function(){
 
   },
-  step_size: 1,
+  step_size: null,
   socket: {},
   jobq: [],
   inprogq: [],

@@ -17,35 +17,6 @@ var hbs = exphbs.create({ /* config */ });
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-var generator = function(current, step, compute){
-  //Start
-  var a = 0;
-  //Start
-  var b = 0;
-  var end = 10000;
-  var nsteps = end/step;
-
-  var ranges_left = []
-}
-var step_size = (600-100)/10000000;
-jsdmp.init({
-  step_size: step_size,
-  generator: generator,
-})
-
-
-var aggregator = function(data, total){
-  return total+= data;
-}
-
-
-
-
-
-
-
-
->>>>>>> 028b4bd87ff6eb25ea08a4f95ab6145b51a0b5ef
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');
@@ -65,18 +36,51 @@ wsServer = new WebSocketServer({
 wsServer.on('request', function(request) {
     var connection = request.accept(null, request.origin);
 
-    // This is the most important callback for us, we'll handle
-    // all messages from users here.
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') {
-            // process WebSocket message
-        }
-    });
-
     connection.on('close', function(connection) {
         // close user connection
+        console.log(connection);
     });
+
+    connection.on('job:completed', jsdmp.aggregator(data));
 });
+
+
+var generator = function(current, step, compute){
+  var job = {
+    data: {
+      start: this.current_position,
+      end: this.current_position + this.step_size
+    },
+    compute_function: this.compute_function
+  };
+  this.current_position += this.step_size;
+  this.jobq.push(job);
+}
+var aggregator = function(data){
+  return this.total += data.result;
+}
+var compute_function = function(args){
+  var a = args.a;
+  var b = args.b;
+  var step_size = args.step_size;
+  var start = Math.cos(a/3) - Math.cos(a/5) + Math.sin(a/4) + 8;
+  var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
+  return ((start + stop)/2) * step_size;
+}
+var start = 100;
+var stop = 600;
+var step_size = (stop-start)/10000000;
+jsdmp.init({
+  step_size: step_size,
+  generator: generator,
+  aggregator: aggregator,
+  compute_function: compute_function,
+  socket: wsServer
+});
+jsdmp.current_position = start;
+jsdmp.start = start;
+jsdmp.end = stop;
+
 
 
 // view engine setup
