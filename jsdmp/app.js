@@ -11,8 +11,12 @@ var users = require('./routes/users');
 
 var app = express();
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+var hbs = exphbs.create({ /* config */ });
+
+// Register `hbs.engine` with the Express app.
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');
