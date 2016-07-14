@@ -1,10 +1,29 @@
-var app = angular.module('jsDMP', ['btford.socket-io', 'AppCtrl']);
-
-app.factory('mySocket', function(socketFacotry) {
-    var mySocket = socketFactory();
-});
-
-app.controller('AppCtrl', function($scope, mySocket) {
+var app = angular.module('jsdmp', ['AppCtrl']);
+app.factory('socket', function($rootScope) {
+    var socket;
+    socket = io.connect("http://localhost:8080");
+    return {
+      on: function(eventName, callback) {
+        return socket.on(eventName, function() {
+          var args;
+          args = arguments;
+          return $rootScope.$apply(function() {
+            return callback.apply(socket, args);
+          });
+        });
+      },
+      emit: function(eventName, data, callback) {
+        return socket.emit(eventName, data, function() {
+          var args;
+          args = arguments;
+          return $rootScope.$apply(function() {
+            return callback.apply(socket, args);
+          });
+        });
+      }
+    };
+  });
+app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
     $scope.init = function() {
         mySocket.emit('job:request', {});
         mySocket.on('job:new_job', $scope.compute);
@@ -18,4 +37,4 @@ app.controller('AppCtrl', function($scope, mySocket) {
             result: output
         });
     };
-});
+}]);
