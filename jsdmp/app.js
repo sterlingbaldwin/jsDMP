@@ -27,15 +27,11 @@ var generator = function(current, step, compute){
 
   var ranges_left = []
 }
-
-
-
-
-
-
-
-
-
+var step_size = (600-100)/10000000;
+jsdmp.init({
+  step_size: step_size,
+  generator: generator,
+})
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');

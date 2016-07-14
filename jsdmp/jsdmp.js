@@ -34,7 +34,7 @@ module.exports = {
   compute_function: function(){
 
   },
-  step_size: 10,
+  step_size: 1,
   socket: {},
   jobq: [],
   inprogq: [],
