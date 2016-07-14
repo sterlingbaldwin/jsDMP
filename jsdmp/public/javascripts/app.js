@@ -1,8 +1,8 @@
 var app = angular.module('jsdmp', []);
 app.factory('socket', function($rootScope) {
     var socket;
-    // socket = io.connect("http://baldwin.codes:8080");
-    socket = io.connect("localhost:8080");
+    socket = io.connect("http://baldwin.codes:8080");
+    // socket = io.connect("localhost:8080");
     return {
         on: function(eventName, callback) {
             return socket.on(eventName, function() {
