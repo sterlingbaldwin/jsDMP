@@ -91,11 +91,13 @@ io.on('connection', function(client){
   });
 
   client.on('job:completed', function(data){
-    console.log(data);
     jsdmp.aggregator(data);
-    if(jsdmp.find_error() < 0.05){
+    var error = jsdmp.find_error()
+    if(error < 0.05){
       jsdmp.complete = true;
     }
+    console.log("current total: " + jsdmp.total);
+    console.log("current error: " + error);
   })
 });
 
