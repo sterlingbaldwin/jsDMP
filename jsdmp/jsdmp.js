@@ -28,13 +28,11 @@ module.exports = {
   aggregator: function(){
 
   },
-  socket: {}
-};
+  compute_function: function(){
 
-var jobq = [];
-var inprogq = [];
-var completeq = [];
-
-var compute_function = function(){
-
+  },
+  socket: {},
+  jobq: [],
+  inprogq: [],
+  completeq: []
 };
