@@ -47,7 +47,7 @@ compute_function = compute_function.toString();
 
 var start = 100;
 var stop = 600;
-var step_size = (stop-start)/100000;
+var step_size = (stop-start)/1000;
 jsdmp.init({
   step_size: step_size,
   generator: generator,
@@ -67,7 +67,7 @@ jsdmp.complete = false;
 var io = require('socket.io')(8080);
 io.on('connection', function(client){
   client.on('init', function(data){
-    console.log('Client connected');
+    console.log('********* Client connected *********');
   });
 
   client.on('disconnect', function(data){
@@ -75,6 +75,9 @@ io.on('connection', function(client){
   });
 
   client.on('job:request', function(data){
+    if(jsdmp.complete == true){
+      return;
+    }
     jsdmp.generator();
     var job = jsdmp.jobq.pop();
     if(!job.data.start){
@@ -89,9 +92,10 @@ io.on('connection', function(client){
     var error = jsdmp.find_error()
     if(error < 0.05){
       jsdmp.complete = true;
+      console.log('complete!');
+      console.log("current total: " + jsdmp.total);
+      console.log("current error: " + error);
     }
-    console.log("current total: " + jsdmp.total);
-    console.log("current error: " + error);
   })
 });
 
