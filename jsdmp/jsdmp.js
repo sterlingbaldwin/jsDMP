@@ -15,6 +15,9 @@ module.exports = {
     if(!args.compute_function){
       console.log('no compute_function given to init');
     }
+    if(args.step_size){
+      this.step_size = args.step_size;
+    }
     this.aggregator = args.aggregator;
     this.compute_function = args.compute_function;
     this.generator = args.generator;
@@ -31,6 +34,7 @@ module.exports = {
   compute_function: function(){
 
   },
+  step_size: 10,
   socket: {},
   jobq: [],
   inprogq: [],
