@@ -8,12 +8,14 @@ module.exports = {
     }
   },
   dispatcher: function(){
-
+    var job = jobq.pop();
+    inprogq.push(job);
+    socket.emit('job:request', job);
   },
   aggregator: function(){
 
   },
-
+  socket = null;
 };
 
 var jobq = []
