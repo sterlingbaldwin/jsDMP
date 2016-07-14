@@ -18,33 +18,6 @@ app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 
-var WebSocketServer = require('websocket').server;
-var http = require('http');
-
-var server = http.createServer(function(request, response) {
-    // process HTTP request. Since we're writing just WebSockets server
-    // we don't have to implement anything.
-});
-server.listen(1337, function() { });
-
-// create the server
-wsServer = new WebSocketServer({
-    httpServer: server
-});
-
-// WebSocket server
-wsServer.on('request', function(request) {
-    var connection = request.accept(null, request.origin);
-
-    connection.on('close', function(connection) {
-        // close user connection
-        console.log(connection);
-    });
-
-    connection.on('job:completed', jsdmp.aggregator(data));
-});
-
-
 var generator = function(current, step, compute){
   var job = {
     data: {
@@ -74,12 +47,29 @@ jsdmp.init({
   step_size: step_size,
   generator: generator,
   aggregator: aggregator,
-  compute_function: compute_function,
-  socket: wsServer
+  compute_function: compute_function
 });
 jsdmp.current_position = start;
 jsdmp.start = start;
 jsdmp.end = stop;
+
+var io = require('socket.io')(8080);
+io.on('connection', function(client){
+  client.on('init', function(data){
+    console.log('Client connected');
+  });
+
+  client.on('disconnect', function(data){
+    console.log('client disconnected');
+  });
+
+  client.on('job:request', function(data){
+    var job = jsdmp.jobq.pop();
+    jsdmp.generator();
+    client.emit('job:new_job', job);
+  });
+});
+
 
 
 

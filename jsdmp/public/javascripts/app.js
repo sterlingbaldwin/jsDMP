@@ -1,7 +1,7 @@
-var app = angular.module('jsDMP', ['btford.socket-io', 'jsDMP.AppCtrl']);
+var app = angular.module('jsDMP', ['btford.socket-io', 'AppCtrl']);
 
 app.factory('mySocket', function(socketFacotry) {
-    return socketFactory();
+    var mySocket = socketFactory();
 });
 
 app.controller('AppCtrl', function($scope, mySocket) {
