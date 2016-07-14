@@ -29,6 +29,10 @@ var generator = function(current, step, compute){
 }
 
 
+var aggregator = function(data, total){
+  return total+= data;
+}
+
 
 
 
