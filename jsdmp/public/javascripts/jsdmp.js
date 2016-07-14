@@ -4,9 +4,30 @@ $(function () {
 
     var connection = new WebSocket('ws://127.0.0.1:1337');
 
+    // Requests job on connect
+    var requestJob = function(){
+      return job;
+    }
+
+    // Computes job, when done returns the result
+    computeJob(job) = function(){
+      return result;
+    }
+    // tells the backend to dorp the job when computed
+    reportBackend() = function(){
+
+    }
+
+    sendOutput() + function(){
+      
+    }
+
     connection.onopen = function () {
         console.log('connection ready');
-    };
+        //request job()
+        //computejob()
+    }; //ask for resources and
+
 
     connection.onerror = function (error) {
         console.log('connection error');
