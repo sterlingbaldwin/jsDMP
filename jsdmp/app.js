@@ -33,6 +33,16 @@ var aggregator = function(data){
   return this.total += data.result;
 }
 
+var compute_function = function(args){
+  var a = args.a;
+  var b = args.b;
+  var step_size = args.step_size;
+  var start = Math.cos(a/3) - Math.cos(a/5) + Math.sin(a/4) + 8;
+  var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
+  return ((start + stop)/2) * step_size;
+}
+
+compute_function = compute_function.toString();
 
 var start = 100;
 var stop = 600;
@@ -69,8 +79,11 @@ io.on('connection', function(client){
       jsdmp.generator();
       job = jsdmp.jobq.pop();
     }
+<<<<<<< HEAD
     // var prefix = "var a = " + job.data.start + "; var b = " + job.data.stop + ";"
     // var job.compute_function = prefix + job.compute_function;
+=======
+>>>>>>> c32e212a3b7854ca25d9c9e2c51779472daf7a2f
     // job = JSON.stringify(job);
     console.log(job);
     client.emit('job:new_job', job);
