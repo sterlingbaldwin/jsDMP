@@ -22,7 +22,8 @@ var generator = function(current, step, compute){
   var job = {
     data: {
       start: this.current_position,
-      end: this.current_position + this.step_size
+      end: this.current_position + this.step_size,
+      step_size: this.step_size
     },
     compute_function: this.compute_function
   };
@@ -34,11 +35,16 @@ var aggregator = function(data){
 }
 
 var compute_function = function(args){
-  var a = args.a;
-  var b = args.b;
+  var a = args.start;
+  var b = args.end;
+  console.log(a);
+  console.log(b);
+  console.log(args.step_size);
   var step_size = args.step_size;
   var start = Math.cos(a/3) - Math.cos(a/5) + Math.sin(a/4) + 8;
   var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
+  console.log(start);
+  console.log(stop);
   return ((start + stop)/2) * step_size;
 }
 
@@ -53,15 +59,16 @@ jsdmp.init({
   aggregator: aggregator,
   compute_function: compute_function
 });
+jsdmp.find_error = function(){
+  return Math.abs(jsdmp.target - jsdmp.total)/jsdmp.total * 100;
+}
 jsdmp.current_position = start;
 jsdmp.start = start;
 jsdmp.end = stop;
-// console.log(jsdmp);
-// var http = require('http');
-// var server= http.createServer(handler);
-// var io = require('socket.io')(server);
-//
-// server.listen(8080);
+jsdmp.total = 0.0;
+jsdmp.target = 4003.72090015132682659;
+jsdmp.complete = false;
+
 var io = require('socket.io')(8080);
 io.on('connection', function(client){
   client.on('init', function(data){
@@ -79,15 +86,17 @@ io.on('connection', function(client){
       jsdmp.generator();
       job = jsdmp.jobq.pop();
     }
-<<<<<<< HEAD
-    // var prefix = "var a = " + job.data.start + "; var b = " + job.data.stop + ";"
-    // var job.compute_function = prefix + job.compute_function;
-=======
->>>>>>> c32e212a3b7854ca25d9c9e2c51779472daf7a2f
-    // job = JSON.stringify(job);
     console.log(job);
     client.emit('job:new_job', job);
   });
+
+  client.on('job:completed', function(data){
+    console.log(data);
+    jsdmp.aggregator(data);
+    if(jsdmp.find_error() < 0.05){
+      jsdmp.complete = true;
+    }
+  })
 });
 
 

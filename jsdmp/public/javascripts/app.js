@@ -28,30 +28,17 @@ app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
         socket.emit('job:request', {});
     };
 
-<<<<<<< HEAD
-  socket.on('job:new_job', function(job) {
-      console.log('job', job)
-      var data = job.data;
-      //var output = eval(job.compute_function(data));
-      var func = eval(job.compute_function);
-      var output = func(job.data);
-      socket.emit('job:completed', {
-          result: output
-      });
-  });
-=======
     socket.on('job:new_job', function(job) {
         console.log('job', job)
         var data = job.data;
-        //   var output = job.compute_function(data);
         var string_func = "(" + job.compute_function + ")";
-        var func = eval(string_func);
-        console.log('func', func)
+        var compute_function = eval(string_func);
+        var output = compute_function(data);
         socket.emit('job:completed', {
             result: output
         });
+        socket.emit('job:request', {});
     });
->>>>>>> c32e212a3b7854ca25d9c9e2c51779472daf7a2f
 
     socket.on('init', function() {
         console.log('connected');
