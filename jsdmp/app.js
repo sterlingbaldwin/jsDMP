@@ -33,6 +33,20 @@ jsdmp.init({
   generator: generator,
 })
 
+
+var aggregator = function(data, total){
+  return total+= data;
+}
+
+
+
+
+
+
+
+
+>>>>>>> 028b4bd87ff6eb25ea08a4f95ab6145b51a0b5ef
+
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
