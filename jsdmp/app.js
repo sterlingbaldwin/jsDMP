@@ -66,7 +66,7 @@ jsdmp.complete = false;
 
 var io = require('socket.io')(8080);
 io.on('connection', function(client){
-  client.on('init', function(data){
+  client.on('connect', function(data){
     console.log('********* Client connected *********');
   });
 
