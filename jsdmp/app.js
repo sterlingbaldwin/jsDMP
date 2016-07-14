@@ -32,14 +32,8 @@ var generator = function(current, step, compute){
 var aggregator = function(data){
   return this.total += data.result;
 }
-var compute_function = function(args){
-  var a = args.a;
-  var b = args.b;
-  var step_size = args.step_size;
-  var start = Math.cos(a/3) - Math.cos(a/5) + Math.sin(a/4) + 8;
-  var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
-  return ((start + stop)/2) * step_size;
-}
+
+
 var start = 100;
 var stop = 600;
 var step_size = (stop-start)/10000000;
@@ -52,7 +46,7 @@ jsdmp.init({
 jsdmp.current_position = start;
 jsdmp.start = start;
 jsdmp.end = stop;
-console.log(jsdmp);
+// console.log(jsdmp);
 // var http = require('http');
 // var server= http.createServer(handler);
 // var io = require('socket.io')(server);
@@ -75,7 +69,9 @@ io.on('connection', function(client){
       jsdmp.generator();
       job = jsdmp.jobq.pop();
     }
-    job = JSON.stringify(job);
+    // var prefix = "var a = " + job.data.start + "; var b = " + job.data.stop + ";"
+    // var job.compute_function = prefix + job.compute_function;
+    // job = JSON.stringify(job);
     console.log(job);
     client.emit('job:new_job', job);
   });
