@@ -4,7 +4,13 @@ module.exports = {
   },
   init: function(args){
     if(args.generator){
-      this.generator = generator;
+      this.generator = args.generator;
+    }
+    if(args.aggregator){
+      this.aggregator = args.aggregator;
+    }
+    if(args.jobq_size){
+      this.jobq_size = args.jobq_size;
     }
   },
   dispatcher: function(){
