@@ -26,15 +26,18 @@ app.factory('socket', function($rootScope) {
 app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
   $scope.init = function() {
       socket.emit('job:request', {});
-      socket.on('job:new_job', $scope.compute);
   };
-  // Computes job, when done returns the result
-  $scope.compute = function(job) {
+
+  socket.on('job:new_job', function(job) {
       console.log('job', job)
       var data = job.data;
-      var output = job.function(data);
+      var output = job.compute_function(data);
       socket.emit('job:completed', {
           result: output
       });
-  };
+  });
+
+  socket.on('init', function(){
+    console.log('connected');
+  })
 }]);

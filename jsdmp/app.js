@@ -52,7 +52,12 @@ jsdmp.init({
 jsdmp.current_position = start;
 jsdmp.start = start;
 jsdmp.end = stop;
-
+console.log(jsdmp);
+// var http = require('http');
+// var server= http.createServer(handler);
+// var io = require('socket.io')(server);
+//
+// server.listen(8080);
 var io = require('socket.io')(8080);
 io.on('connection', function(client){
   client.on('init', function(data){
@@ -64,8 +69,14 @@ io.on('connection', function(client){
   });
 
   client.on('job:request', function(data){
-    var job = jsdmp.jobq.pop();
     jsdmp.generator();
+    var job = jsdmp.jobq.pop();
+    if(!job.data.start){
+      jsdmp.generator();
+      job = jsdmp.jobq.pop();
+    }
+    job = JSON.stringify(job);
+    console.log(job);
     client.emit('job:new_job', job);
   });
 });
