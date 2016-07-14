@@ -37,14 +37,9 @@ var aggregator = function(data){
 var compute_function = function(args){
   var a = args.start;
   var b = args.end;
-  console.log(a);
-  console.log(b);
-  console.log(args.step_size);
   var step_size = args.step_size;
   var start = Math.cos(a/3) - Math.cos(a/5) + Math.sin(a/4) + 8;
   var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
-  console.log(start);
-  console.log(stop);
   return ((start + stop)/2) * step_size;
 }
 
@@ -86,7 +81,6 @@ io.on('connection', function(client){
       jsdmp.generator();
       job = jsdmp.jobq.pop();
     }
-    console.log(job);
     client.emit('job:new_job', job);
   });
 
