@@ -40,6 +40,9 @@ var compute_function = function(args){
   var stop = Math.cos(b/3) - Math.cos(b/5) + Math.sin(b/4) + 8;
   return ((start + stop)/2) * step_size;
 }
+
+compute_function = compute_function.toString();
+
 var start = 100;
 var stop = 600;
 var step_size = (stop-start)/10000000;
@@ -75,7 +78,7 @@ io.on('connection', function(client){
       jsdmp.generator();
       job = jsdmp.jobq.pop();
     }
-    job = JSON.stringify(job);
+    // job = JSON.stringify(job);
     console.log(job);
     client.emit('job:new_job', job);
   });
