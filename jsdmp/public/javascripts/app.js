@@ -4,7 +4,8 @@ app.factory('mySocket', function(socketFacotry) {
   return socketFactory();
 });
 
-app.cotroller('AppCtrl', function($scope, mySocket) {
-  mySocket.emit('Hello Event', { data: 'Hi Team' });
+app.controller('AppCtrl', function($scope, mySocket) {
+  $scope.init = function() {
+    mySocket.emit('Hello Event', { data: 'Hi Team' });
+  };
 });
-
