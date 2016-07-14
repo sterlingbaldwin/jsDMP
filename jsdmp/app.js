@@ -17,11 +17,16 @@ var hbs = exphbs.create({ /* config */ });
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-var aggregator = function(data, total){
-  return total += data;
-}
+var generator = function(current, step, compute){
+  //Start
+  var a = 0;
+  //Start
+  var b = 0;
+  var end = 10000;
+  var nsteps = end/step;
 
-var jsdmp = jsdmp.init({});
+  var ranges_left = []
+}
 
 
 
