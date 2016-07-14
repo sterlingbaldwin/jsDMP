@@ -20,8 +20,8 @@ var jobq = []
 var inprogq = []
 var completeq = []
 
-var compute_function = function{
+var compute_function = function(){
 
 }
 
-var pending_data = 
+var pending_data =
