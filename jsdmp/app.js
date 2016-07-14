@@ -47,7 +47,7 @@ compute_function = compute_function.toString();
 
 var start = 100;
 var stop = 600;
-var step_size = (stop-start)/10000000;
+var step_size = (stop-start)/100000;
 jsdmp.init({
   step_size: step_size,
   generator: generator,
@@ -55,7 +55,7 @@ jsdmp.init({
   compute_function: compute_function
 });
 jsdmp.find_error = function(){
-  return Math.abs(jsdmp.target - jsdmp.total)/jsdmp.total * 100;
+  return (Math.abs(jsdmp.target - jsdmp.total)/jsdmp.total) * 100;
 }
 jsdmp.current_position = start;
 jsdmp.start = start;
