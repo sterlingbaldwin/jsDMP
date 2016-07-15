@@ -28,10 +28,9 @@ var generator = function() {
         compute_function: this.compute_function
     };
     this.current_position += this.step_size;
-    this.jobq.push(job);
+    return job;
 }
-var aggregator = function(data, client) {
-    delete this.inprogq[client.id];
+var aggregator = function(data) {
     return this.total += data.result;
 }
 
@@ -118,12 +117,12 @@ io.on('connection', function(client) {
         if (jsdmp.complete == true) {
             return;
         }
-        jsdmp.dispatcher(client);
+        jsdmp.dispatch(client);
     });
 
     client.on('job:completed', function(data) {
         console.log('job completed');
-        jsdmp.aggregator(data, client);
+        jsdmp.aggregate(data, client);
         var error = jsdmp.find_error()
         if (jsdmp.completed()) {
             console.log('******************Completed***********************');

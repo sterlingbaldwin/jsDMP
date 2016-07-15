@@ -1,18 +1,10 @@
 module.exports = {
-    generator: function() {
-
-    },
     init: function(args) {
         if (!args.generator) {
             console.log('no generator given to init');
         }
         if (!args.aggregator) {
             console.log('no aggregator given to init');
-        }
-        if (args.jobq_size) {
-            this.jobq_size = args.jobq_size;
-        } else {
-            this.jobq_size = 10;
         }
         if (!args.compute_function) {
             console.log('no compute_function given to init');
@@ -26,9 +18,9 @@ module.exports = {
         this.compute_function = args.compute_function.toString();
         this.generator = args.generator;
     },
-    dispatcher: function(client) {
+    dispatch: function(client) {
         if (this.jobs_sent !== this.num_jobs) {
-            this.generator();
+            this.generate();
             var job = this.jobq.pop();
             this.inprogq[client.id] = job;
             client.emit('job:new_job', job)
@@ -39,16 +31,19 @@ module.exports = {
             }
         }
     },
-    aggregator: function() {
-
+    generate: function(){
+        job = this.generator();
+        this.jobq.push(job);
     },
-    compute_function: function() {
-
+    aggregate: function(data, client){
+        delete this.inprogq[client.id];
+        this.aggregator(data);
     },
-    clientDisconnect() {
-
-    },
-    completed(){
+    generator: function() {},
+    aggregator: function() {},
+    compute_function: function() {},
+    clientDisconnect: function() {},
+    completed: function(){
         if (this.last_job_sent && Object.keys(this.inprogq).length === 0){
             return true;
         }
