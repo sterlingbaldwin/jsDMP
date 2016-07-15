@@ -73,6 +73,7 @@ io.on('connection', function(client) {
     jsdmp.numberOfUsers += 1;
 
     client.on('update', function(data){
+      console.log("got an update request");
       var update_data = {
         current_approximation: jsdmp.total,
         jobsCompleted: jsdmp.jobsCompleted,

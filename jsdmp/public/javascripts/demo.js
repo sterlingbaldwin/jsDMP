@@ -34,8 +34,9 @@ app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
     setInterval(update, timeout);
   }
 
-
   socket.on('update', function(data){
+    console.log('Got an update');
+    console.log(data);
     $scope.current_approximation = data.current_positionaproximation;
     $scope.jobsCompleted = data.jobsCompleted;
     $scope.numberOfUsers = data.numberOfUsers;
