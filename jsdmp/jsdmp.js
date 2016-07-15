@@ -42,10 +42,11 @@ module.exports = {
     generator: function() {},
     aggregator: function() {},
     compute_function: function() {},
-    clientDisconnect: function() {},
-    completed: function() {},
-    clientDisconnect: function() {},
-    completed: function() {
+    clientDisconnect: function(id) {
+        this.jobq.push(this.inprogq[id]);
+        this.numberOfUsers += 1;
+    },
+    completed: function(){
         if (this.last_job_sent && Object.keys(this.inprogq).length === 0){
             return true;
         }
