@@ -1,7 +1,7 @@
 var app = angular.module('jsdmp', []);
 app.factory('socket', function($rootScope) {
     var socket;
-    socket = io.connect("http://baldwin.codes:8080");
+    socket = io.connect("http://localhost:8080");
     // socket = io.connect("localhost:8080");
     return {
         on: function(eventName, callback) {
@@ -28,7 +28,7 @@ app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
 
   $scope.init = function(){
     var timeout = 200;
-    var udpate = function() {
+    var update = function() {
         socket.emit('update', {});
     };
     setInterval(update, timeout);

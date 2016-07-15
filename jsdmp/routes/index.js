@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 /* GET udpate page. */
 router.get('/update', function(req, res, next) {
-  res.render('update', {});
+  res.render('demo', {});
 });
 
 module.exports = router;

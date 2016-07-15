@@ -2,8 +2,15 @@
   <script src="/javascripts/jquery-3.1.0.min.js"></script>
   <script type="text/javascript" src="/javascripts/angular.min.js"></script>
   <script type="text/javascript" src="/javascripts/socket.io.js"></script>
-  <script type="text/javascript" src="/javascripts/app.js"></script>
+  <script type="text/javascript" src="/javascripts/demo.js"></script>
 </head>
 <body ng-app="jsdmp" ng-controller='DemoCtrl' ng-init="init()">
-  <h1>Example App: Home</h1>
+  <h2>Distributed multi-processing throug the magic of javascript</h2>
+  <div class="">
+    <p ng-bind="current_approximation"></p>
+    <p ng-bind="jobsCompleted"></p>
+    <p ng-bind="numberOfUsers"></p>
+    <p ng-bind="error"></p>
+    <p ng-bind="elapsed_time"></p>
+  </div>
 </body>
