@@ -6,4 +6,9 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+/* GET udpate page. */
+router.get('/update', function(req, res, next) {
+  res.render('update', {});
+});
+
 module.exports = router;

@@ -72,6 +72,17 @@ io.on('connection', function(client) {
     console.log('********* Client connected *********');
     jsdmp.numberOfUsers += 1;
 
+    client.on('update', function(data){
+      var update_data = {
+        current_approximation: jsdmp.total,
+        jobsCompleted: jsdmp.jobsCompleted,
+        numberOfUsers: jsdmp.numberOfUsers,
+        error: jsdmp.error,
+        elapsed_time: jsdmp.elapsed_time
+      }
+      client.emit('update', update_data);
+    });
+
     if(!start_time){
         console.log('setting start time');
         start_time = new Date()
@@ -96,6 +107,7 @@ io.on('connection', function(client) {
     });
 
     client.on('job:completed', function(data) {
+        jsdmp.jobsCompleted += 1;
         jsdmp.aggregator(data);
         var error = jsdmp.find_error()
         if (error < 0.05) {
@@ -104,7 +116,9 @@ io.on('connection', function(client) {
             console.log("current total: " + jsdmp.total);
             console.log("current error: " + error);
             var end_time = new Date();
-            console.log('completion time:', (end_time.getTime() - start_time.getTime()) / 1000)
+            var elapsed_time = (end_time.getTime() - start_time.getTime()) / 1000;
+            console.log('completion time:', elapsed_time);
+            jsdmp.elapsed_time = elapsed_time;
         }
     })
 });

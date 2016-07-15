@@ -25,6 +25,16 @@ app.factory('socket', function($rootScope) {
     };
 });
 app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
+
+  $scope.init = function(){
+    var timeout = 200;
+    var udpate = function() {
+        socket.emit('update', {});
+    };
+    setInterval(update, timeout);
+  }
+
+
   socket.on('update', function(data){
     $scope.current_approximation = data.current_positionaproximation;
     $scope.jobsCompleted = data.jobsCompleted;
