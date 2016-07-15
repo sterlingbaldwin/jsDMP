@@ -42,6 +42,7 @@ app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
     $scope.numberOfUsers = data.numberOfUsers;
     $scope.error = data.error;
     $scope.elapsed_time = data.elapsed_time;
+    $scope.jobRate = data.jobRate;
   });
 }]);
 

@@ -70,6 +70,9 @@ jsdmp.jobsCompleted = 0;
 jsdmp.numberOfUsers = 0;
 jsdmp.elapsed_time = 0;
 
+var update_start_time = new Date();
+var update_jobs = 0;
+
 var io = require('socket.io')(8080);
 io.on('connection', function(client) {
     console.log('********* Client connected *********');
@@ -77,12 +80,29 @@ io.on('connection', function(client) {
 
     client.on('update', function(data){
       console.log("got an update request");
+      if(update_jobs == 0){
+        update_jobs = jsdmp.jobsCompleted;
+      } else {
+        update_jobs = jsdmp.jobsCompleted - update_jobs;
+        console.log(jsdmp.jobsCompleted);
+        console.log(update_jobs);
+      }
+      if(jsdmp.complete == false){
+
+        var end_time = new Date();
+        var elapsed_time = (end_time.getTime() - update_start_time.getTime()) / 1000;
+      } else {
+        elapsed_time = jsdmp.elapsed_time;
+      }
+      var jobRate = update_jobs / elapsed_time;
+
       var update_data = {
         current_approximation: jsdmp.total,
         jobsCompleted: jsdmp.jobsCompleted,
         numberOfUsers: jsdmp.numberOfUsers,
         error: jsdmp.error,
-        elapsed_time: jsdmp.elapsed_time
+        elapsed_time: elapsed_time,
+        jobRate: jobRate
       }
       client.emit('update', update_data);
     });
