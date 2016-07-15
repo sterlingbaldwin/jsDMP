@@ -18,7 +18,7 @@ app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 
-var generator = function(current, step, compute) {
+var generator = function() {
     var job = {
         data: {
             start: this.current_position,
@@ -63,17 +63,23 @@ jsdmp.end = stop;
 jsdmp.total = 0.0;
 jsdmp.target = 4003.72090015132682659;
 jsdmp.complete = false;
+jsdmp.jobsCompleted = 0;
+jsdmp.numberOfUsers = 0;
+jsdmp.elapsed_time = 0;
 
 var io = require('socket.io')(8080);
 io.on('connection', function(client) {
     console.log('********* Client connected *********');
+    jsdmp.numberOfUsers += 1;
+
     if(!start_time){
         console.log('setting start time');
         start_time = new Date()
     }
-    
+
     client.on('disconnect', function(data) {
         console.log('client disconnected');
+        jsdmp.numberOfUsers -= 1;
     });
 
     client.on('job:request', function(data) {
