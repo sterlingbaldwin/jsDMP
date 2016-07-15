@@ -19,10 +19,14 @@ app.set('view engine', 'handlebars');
 
 
 var generator = function() {
+    var end = this.current_position + this.step_size;
+    if(end > this.end){
+      end = this.end;
+    }
     var job = {
         data: {
             start: this.current_position,
-            end: this.current_position + this.step_size,
+            end: end,
             step_size: this.step_size
         },
         compute_function: this.compute_function
@@ -38,16 +42,17 @@ var compute_function = function(args) {
     var a = args.start;
     var b = args.end;
     var step_size = args.step_size;
-    var start = Math.cos(a / 3) - Math.cos(a / 5) + Math.sin(a / 4) + 8;
-    var stop = Math.cos(b / 3) - Math.cos(b / 5) + Math.sin(b / 4) + 8;
+    var start = Math.cos(a / 3) - Math.cos(a / 5) + Math.sin(a / 4) + 80;
+    var stop = Math.cos(b / 3) - Math.cos(b / 5) + Math.sin(b / 4) + 80;
     return ((start + stop) / 2) * step_size;
 }
 
-var num_jobs = 1000;
+var num_jobs = 5000;
 var start_time = null;
 var start = 100;
 var stop = 600;
 var step_size = (stop - start) / num_jobs;
+//var step_size = 0.1;
 jsdmp.init({
     num_jobs: num_jobs,
     step_size: step_size,
@@ -64,8 +69,10 @@ jsdmp.current_position = start;
 jsdmp.start = start;
 jsdmp.end = stop;
 jsdmp.total = 0.0;
-jsdmp.target = 4003.72090015132682659;
+//jsdmp.target = 4003.72090015132682659;
+jsdmp.target = 39997.3879977326;
 jsdmp.complete = false;
+jsdmp.numberOfUsers = 0;
 
 var update_start_time = new Date();
 var update_jobs = 0;
@@ -76,16 +83,14 @@ io.on('connection', function(client) {
     jsdmp.numberOfUsers += 1;
 
     client.on('update', function(data){
-      console.log("got an update request");
       if(update_jobs == 0){
         update_jobs = jsdmp.jobs_sent;
       } else {
         update_jobs = jsdmp.jobs_sent - update_jobs;
-        console.log(jsdmp.jobs_sent);
-        console.log(update_jobs);
       }
+      var completed = false;
       if(!jsdmp.completed()){
-
+        completed = true;
         var end_time = new Date();
         var elapsed_time = (end_time.getTime() - update_start_time.getTime()) / 1000;
       } else {
@@ -94,8 +99,9 @@ io.on('connection', function(client) {
       var jobRate = update_jobs / elapsed_time;
 
       var update_data = {
+        completed: completed,
         current_approximation: jsdmp.total,
-        jobsCompleted: jsdmp.jobsCompleted,
+        jobsCompleted: jsdmp.jobs_sent,
         numberOfUsers: jsdmp.numberOfUsers,
         error: jsdmp.error,
         elapsed_time: elapsed_time,
@@ -104,7 +110,6 @@ io.on('connection', function(client) {
       client.emit('update', update_data);
     });
     if(!start_time){
-        console.log('setting start time');
         start_time = new Date()
     }
 
@@ -121,7 +126,6 @@ io.on('connection', function(client) {
     });
 
     client.on('job:completed', function(data) {
-        console.log('job completed');
         jsdmp.aggregate(data, client);
         var error = jsdmp.find_error()
         if (jsdmp.completed()) {

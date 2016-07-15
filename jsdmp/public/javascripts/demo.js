@@ -37,12 +37,27 @@ app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
   socket.on('update', function(data){
     console.log('Got an update');
     console.log(data);
-    $scope.current_approximation = data.current_approximation;
-    $scope.jobsCompleted = data.jobsCompleted;
-    $scope.numberOfUsers = data.numberOfUsers;
-    $scope.error = data.error;
-    $scope.elapsed_time = data.elapsed_time;
-    $scope.jobRate = data.jobRate;
+    if(data.current_approximation){
+      $scope.current_approximation = data.current_approximation;
+    }
+    if(data.jobsCompleted){
+      $scope.jobsCompleted = data.jobsCompleted;
+    }
+    if(data.numberOfUsers){
+      $scope.numberOfUsers = data.numberOfUsers;
+    }
+    if(data.error){
+      $scope.error = data.error;
+    }
+    if(data.elapsed_time){
+      $scope.elapsed_time = data.elapsed_time;
+    }
+    if(data.jobRate){
+      $scope.jobRate = data.jobRate;
+    }
+    if(data.completed){
+      $scope.completed = true;
+    }
   });
 }]);
 

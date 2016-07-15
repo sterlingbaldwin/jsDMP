@@ -32,6 +32,7 @@ app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
 
     socket.on('job:new_job', function(job) {
         var data = job.data;
+        $scope.job = data;
         var string_func = "(" + job.compute_function + ")";
         var compute_function = eval(string_func);
         var output = compute_function(data);
