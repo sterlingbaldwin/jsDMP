@@ -30,7 +30,8 @@ var generator = function() {
     this.current_position += this.step_size;
     this.jobq.push(job);
 }
-var aggregator = function(data) {
+var aggregator = function(data, client) {
+    delete this.inprogq[client.id];
     return this.total += data.result;
 }
 
@@ -43,13 +44,13 @@ var compute_function = function(args) {
     return ((start + stop) / 2) * step_size;
 }
 
-compute_function = compute_function.toString();
-var numJobs = 1000000;
+var num_jobs = 1000;
 var start_time = null;
 var start = 100;
 var stop = 600;
-var step_size = (stop - start) / numJobs;
+var step_size = (stop - start) / num_jobs;
 jsdmp.init({
+    num_jobs: num_jobs,
     step_size: step_size,
     generator: generator,
     aggregator: aggregator,
@@ -66,9 +67,6 @@ jsdmp.end = stop;
 jsdmp.total = 0.0;
 jsdmp.target = 4003.72090015132682659;
 jsdmp.complete = false;
-jsdmp.jobsCompleted = 0;
-jsdmp.numberOfUsers = 0;
-jsdmp.elapsed_time = 0;
 
 var update_start_time = new Date();
 var update_jobs = 0;
@@ -81,13 +79,13 @@ io.on('connection', function(client) {
     client.on('update', function(data){
       console.log("got an update request");
       if(update_jobs == 0){
-        update_jobs = jsdmp.jobsCompleted;
+        update_jobs = jsdmp.jobs_sent;
       } else {
-        update_jobs = jsdmp.jobsCompleted - update_jobs;
-        console.log(jsdmp.jobsCompleted);
+        update_jobs = jsdmp.jobs_sent - update_jobs;
+        console.log(jsdmp.jobs_sent);
         console.log(update_jobs);
       }
-      if(jsdmp.complete == false){
+      if(!jsdmp.completed()){
 
         var end_time = new Date();
         var elapsed_time = (end_time.getTime() - update_start_time.getTime()) / 1000;
@@ -106,7 +104,6 @@ io.on('connection', function(client) {
       }
       client.emit('update', update_data);
     });
-
     if(!start_time){
         console.log('setting start time');
         start_time = new Date()
@@ -114,35 +111,27 @@ io.on('connection', function(client) {
 
     client.on('disconnect', function(data) {
         console.log('client disconnected');
-        jsdmp.numberOfUsers -= 1;
+        jsdmp.clientDisconnect(client.id);
     });
 
     client.on('job:request', function(data) {
         if (jsdmp.complete == true) {
             return;
         }
-        jsdmp.generator();
-        var job = jsdmp.jobq.pop();
-        if (!job.data.start) {
-            jsdmp.generator();
-            job = jsdmp.jobq.pop();
-        }
-        client.emit('job:new_job', job);
+        jsdmp.dispatcher(client);
     });
 
     client.on('job:completed', function(data) {
-        jsdmp.jobsCompleted += 1;
-        jsdmp.aggregator(data);
+        console.log('job completed');
+        jsdmp.aggregator(data, client);
         var error = jsdmp.find_error()
-        if (error < 0.05) {
-            jsdmp.complete = true;
-            console.log('complete!');
+        if (jsdmp.completed()) {
+            console.log('******************Completed***********************');
             console.log("current total: " + jsdmp.total);
             console.log("current error: " + error);
             var end_time = new Date();
-            var elapsed_time = (end_time.getTime() - start_time.getTime()) / 1000;
-            console.log('completion time:', elapsed_time);
-            jsdmp.elapsed_time = elapsed_time;
+            console.log('completion time:', (end_time.getTime() - start_time.getTime()) / 1000)
+            console.log('***************************************************')
         }
     })
 });
