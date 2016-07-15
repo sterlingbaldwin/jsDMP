@@ -27,6 +27,7 @@ app.factory('socket', function($rootScope) {
 app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
     $scope.init = function() {
         socket.emit('job:request', {});
+        $scope.num_computed = 0;
     };
 
     socket.on('job:new_job', function(job) {
@@ -38,9 +39,15 @@ app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
             result: output
         });
         socket.emit('job:request', {});
+        $scope.num_computed += 1;
     });
 
     socket.on('init', function() {
         console.log('connected');
     })
 }]);
+
+app.config(function($interpolateProvider) {
+  $interpolateProvider.startSymbol('[[');
+  return $interpolateProvider.endSymbol(']]');
+});

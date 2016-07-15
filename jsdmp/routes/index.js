@@ -6,8 +6,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-/* GET udpate page. */
-router.get('/update', function(req, res, next) {
+/* GET demo page. */
+router.get('/demo', function(req, res, next) {
   res.render('demo', {});
 });
 

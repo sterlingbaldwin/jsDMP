@@ -37,10 +37,15 @@ app.controller('DemoCtrl', ['$scope', 'socket', function($scope, socket) {
   socket.on('update', function(data){
     console.log('Got an update');
     console.log(data);
-    $scope.current_approximation = data.current_positionaproximation;
+    $scope.current_approximation = data.current_approximation;
     $scope.jobsCompleted = data.jobsCompleted;
     $scope.numberOfUsers = data.numberOfUsers;
     $scope.error = data.error;
     $scope.elapsed_time = data.elapsed_time;
   });
 }]);
+
+app.config(function($interpolateProvider) {
+  $interpolateProvider.startSymbol('[[');
+  return $interpolateProvider.endSymbol(']]');
+});

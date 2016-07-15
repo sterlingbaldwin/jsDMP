@@ -44,10 +44,11 @@ var compute_function = function(args) {
 }
 
 compute_function = compute_function.toString();
+var numJobs = 1000000;
 var start_time = null;
 var start = 100;
 var stop = 600;
-var step_size = (stop - start) / 1000;
+var step_size = (stop - start) / numJobs;
 jsdmp.init({
     step_size: step_size,
     generator: generator,
@@ -55,7 +56,9 @@ jsdmp.init({
     compute_function: compute_function
 });
 jsdmp.find_error = function() {
-    return (Math.abs(jsdmp.target - jsdmp.total) / jsdmp.total) * 100;
+    var error = (Math.abs(jsdmp.target - jsdmp.total) / jsdmp.total) * 100;
+    jsdmp.error = error;
+    return error;
 }
 jsdmp.current_position = start;
 jsdmp.start = start;
