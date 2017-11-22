@@ -29,25 +29,23 @@ app.controller('AppCtrl', ['$scope', 'socket', function($scope, socket) {
         socket.emit('job:request', {});
         $scope.num_computed = 0;
     };
-
-    socket.on('job:new_job', function(job) {
-        var data = job.data;
-        $scope.job = data;
-        var string_func = "(" + job.compute_function + ")";
-        var compute_function = eval(string_func);
-        var output = compute_function(data);
+    socket.on('job:new_job_set', function(jobs) {
+        var output = []
+        for(var i = 0; i < jobs.length; i++){
+                var data = jobs[i].data;
+                var string_func = "(" + jobs[i].compute_function + ")";
+                var compute_function = eval(string_func);
+                output.push(compute_function(data));
+        }
         socket.emit('job:completed', {
             result: output
         });
         socket.emit('job:request', {});
-        $scope.num_computed += 1;
     });
-
     socket.on('init', function() {
         console.log('connected');
     })
 }]);
-
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('[[');
   return $interpolateProvider.endSymbol(']]');

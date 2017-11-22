@@ -17,7 +17,6 @@ var hbs = exphbs.create({ /* config */ });
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-
 var generator = function() {
     var end = this.current_position + this.step_size;
     if(end > this.end){
@@ -27,7 +26,7 @@ var generator = function() {
         data: {
             start: this.current_position,
             end: end,
-            step_size: this.step_size
+            step_size: this.step_size,
         },
         compute_function: this.compute_function
     };
@@ -39,6 +38,7 @@ var aggregator = function(data) {
 }
 
 var compute_function = function(args) {
+    var total = 0;
     var a = args.start;
     var b = args.end;
     var step_size = args.step_size;
@@ -47,18 +47,24 @@ var compute_function = function(args) {
     return ((start + stop) / 2) * step_size;
 }
 
+//Total number of jobs
 var num_jobs = 5000;
+//when the job started
 var start_time = null;
+//start position
 var start = 100;
+//stop position
 var stop = 600;
+//number of jobs to bundle
+var job_size = num_jobs/100;
 var step_size = (stop - start) / num_jobs;
-//var step_size = 0.1;
 jsdmp.init({
     num_jobs: num_jobs,
     step_size: step_size,
     generator: generator,
     aggregator: aggregator,
-    compute_function: compute_function
+    compute_function: compute_function,
+    job_size: job_size
 });
 jsdmp.find_error = function() {
     var error = (Math.abs(jsdmp.target - jsdmp.total) / jsdmp.total) * 100;
@@ -81,7 +87,9 @@ var io = require('socket.io')(8080);
 io.on('connection', function(client) {
     console.log('********* Client connected *********');
     jsdmp.numberOfUsers += 1;
-
+    if(!start_time){
+        start_time = new Date()
+    }
     client.on('update', function(data){
       if(update_jobs == 0){
         update_jobs = jsdmp.jobs_sent;
@@ -109,22 +117,16 @@ io.on('connection', function(client) {
       }
       client.emit('update', update_data);
     });
-    if(!start_time){
-        start_time = new Date()
-    }
-
     client.on('disconnect', function(data) {
         console.log('client disconnected');
         jsdmp.clientDisconnect(client.id);
     });
-
     client.on('job:request', function(data) {
         if (jsdmp.complete == true) {
             return;
         }
         jsdmp.dispatch(client);
     });
-
     client.on('job:completed', function(data) {
         jsdmp.aggregate(data, client);
         var error = jsdmp.find_error()

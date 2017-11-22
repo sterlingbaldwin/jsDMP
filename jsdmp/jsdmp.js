@@ -20,11 +20,14 @@ module.exports = {
     },
     dispatch: function(client) {
         if (this.jobs_sent !== this.num_jobs) {
-            this.generate();
-            var job = this.jobq.pop();
-            this.inprogq[client.id] = job;
-            client.emit('job:new_job', job)
-            this.jobs_sent += 1;
+            var jobs = [];
+            for(var i = 0; i < this.job_size; i++){
+                    this.generate();
+                    jobs.push(this.jobq.pop());
+            }
+            //this.inprogq[client.id] = job;
+            client.emit('job:new_job_set', jobs)
+            this.jobs_sent += this.job_size;
             if (this.jobs_sent === this.num_jobs) {
                 //last job
                 this.last_job_sent = true;
@@ -32,7 +35,7 @@ module.exports = {
         }
     },
     generate: function(){
-        job = this.generator();
+        var job = this.generator();
         this.jobq.push(job);
     },
     aggregate: function(data, client){
@@ -50,12 +53,13 @@ module.exports = {
         if (this.last_job_sent && Object.keys(this.inprogq).length === 0){
             return true;
         }
-        else{
+        else {
             return false;
         }
     },
     last_job_sent: false,
     step_size: null,
+    job_size: 1,
     socket: {},
     jobq: [],
     inprogq: {},
